@@ -1,0 +1,20 @@
+#%RAML 1.0
+version: v1
+title: New API
+baseUri: http://localhost:8000/
+protocols:
+  - HTTP
+/file:
+  post:
+    body:
+      
+      multipart/form-data:
+       properties:
+          file:
+            description: The file to be uploaded
+            required: true
+            type: file
+        
+    responses:
+         200:
+           description: Successful
