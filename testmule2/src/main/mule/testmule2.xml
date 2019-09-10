@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6463dbb5-9ad3-491b-a0bb-fab4d0cad568" >
+		<http:listener-connection host="0.0.0.0" port="8000">
+		</http:listener-connection>
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="b01b54fb-08ee-4821-a0b2-8deb72a25e20" >
+		<http:request-connection protocol="HTTPS" host="localhost" port="8080" >
+			<tls:context >
+				<tls:trust-store path="keystore/truststore.ts" password="testkey" type="jks" insecure="true"/>
+			</tls:context>
+		</http:request-connection>
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="60e51314-fcb2-4600-aa6d-81f13f4bccb5" >
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="8080" >
+			<tls:context >
+				<tls:key-store type="jks" path="keystore/keystore.jks" alias="mulekey" keyPassword="testkey" password="testkey" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
+	<flow name="testmule2Flow" doc:id="5b9dbe19-bbbc-4e0c-94f5-504ca85f0866" >
+		<http:listener doc:name="Listener" doc:id="21e7d077-623d-4f3d-be4a-c465e6c3e3ca" config-ref="HTTP_Listener_config" path="/api"/>
+		<logger level="INFO" doc:name="Logger" doc:id="36052224-a602-470f-a10d-a1cca1cde48f" message='"Hi"'/>
+		<http:request method="GET" doc:name="Request" doc:id="b566a98d-9519-4e1a-aaee-958d16a55e6e" config-ref="HTTP_Request_configuration" path="/Get">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	name : "venkat"
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="5f0ed514-958b-48e2-ba45-bea2a971a877" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	data:{
+	"status":"Up and running",
+	"cont":payload
+	}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Copy_of_testmule3Flow" doc:id="6f2c6c60-3c5f-41c6-8abc-a3ff705adaf1" >
+		<http:listener doc:name="Copy_of_Listener" doc:id="57aa92b3-2c3e-46ce-8c34-ef7b655813e7" config-ref="HTTP_Listener_config1" path="/Get" />
+		<set-payload value='#["Hi2"]' doc:name="Copy_of_Set Payload" doc:id="3ba41c6d-18b9-4b79-b61c-d20819843741" />
+	</flow>
+</mule>
