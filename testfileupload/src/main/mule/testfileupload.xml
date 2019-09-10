@@ -120,7 +120,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\file:multipart\form-data:testfileupload-config">
-		<set-payload value='#["#[Hello]"]' doc:name="Set Payload" doc:id="c26c579c-e9a8-4b93-abb7-69584da1c769" />
+		<set-payload value='#["#[Hello123]"]' doc:name="Set Payload" doc:id="c26c579c-e9a8-4b93-abb7-69584da1c769" />
 		<logger level="INFO" message="payload" />
     </flow>
 </mule>
